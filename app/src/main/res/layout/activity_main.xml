@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/titleTv"
+        android:layout_marginTop="15dp"
+        android:textColor="@android:color/black"
+        android:text="随机找到数独太难...只判断第一列"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@+id/titleTv"
+        android:id="@+id/sudokuRv"
+        android:layout_width="270dp"
+        android:layout_height="270dp"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:scrollbars="none"
+        android:background="@android:color/white"
+        />
+
+    <Button
+        android:id="@+id/refreshButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="刷新按钮(不重复)"
+        android:padding="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/sudokuRv"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:background="@android:color/darker_gray"
+        />
+
+    <Button
+        android:id="@+id/refreshButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="刷新按钮(相加等于45)"
+        android:padding="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/refreshButton"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:background="@android:color/darker_gray"
+        />
+
+</RelativeLayout>
