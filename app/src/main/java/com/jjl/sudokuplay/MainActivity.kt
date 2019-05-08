@@ -81,15 +81,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         refreshButton.isEnabled = false
         refreshButton2.isEnabled = false
         Executors.newCachedThreadPool().execute {
-            var list: ArrayList<Int> = arrayListOf()
+//            var list: ArrayList<Int> = arrayListOf()
             do {
                 for (intArray in set) {
-                    for (number in tempRefresh.iterator()) {
+                    /*for (number in tempRefresh.iterator()) {
                         list.add(number)
-                    }
+                    }*/
+                    var list: IntArray = tempRefresh
                     for (i: Int in 0..8) {
                         intArray[i] = list.random();
-                        list.remove(intArray[i])
+                        list = list.remove(intArray[i])
                     }
                 }
             } while (check(type))
@@ -179,4 +180,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         return false
     }
 
+    fun IntArray.remove(i: Int): IntArray {
+        val temp : ArrayList<Int> = ArrayList()
+        for (item in this.iterator()) {
+            if(item == i)continue
+            temp.add(item)
+        }
+        return temp.toIntArray()
+    }
+
 }
+
+
