@@ -74,12 +74,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     fun refreshData(type : Int) {
         Toast.makeText(applicationContext, "请稍等，刷新中...", Toast.LENGTH_SHORT).show()
         if(type == TYPE_REPEAT){
-            refreshButton.text = "刷新中"
+            run(refreshButton ,ui3)
+//            refreshButton.text = "刷新中"
         }else{
-            refreshButton2.text = "刷新中"
+            run(refreshButton2 ,ui3)
+//            refreshButton2.text = "刷新中"
         }
-        refreshButton.isEnabled = false
-        refreshButton2.isEnabled = false
+//        refreshButton.isEnabled = false
+//        refreshButton2.isEnabled = false
         Executors.newCachedThreadPool().execute {
 //            var list: ArrayList<Int> = arrayListOf()
             do {
@@ -96,12 +98,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             } while (check(type))
             runOnUiThread {
                 initRecyclerView();
-                refreshButton.isEnabled = true
-                refreshButton2.isEnabled = true
+//                refreshButton.isEnabled = true
+//                refreshButton2.isEnabled = true
                 if(type == TYPE_REPEAT){
-                    refreshButton.text = "刷新按钮(不重复)"
+//                    refreshButton.text = "刷新按钮(不重复)"
+                    run(refreshButton ,ui)
                 }else{
-                    refreshButton2.text = "刷新按钮(相加等于45)"
+//                    refreshButton2.text = "刷新按钮(相加等于45)"
+                    run(refreshButton2 ,ui2)
                 }
             }
         }
@@ -188,6 +192,40 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         return temp.toIntArray()
     }
+
+    // 先封装一个UI操作列表
+    class Ui(val uiOps: List<UiOp> = emptyList()) {
+        operator fun plus(uiOp: UiOp) = Ui(uiOps + uiOp)
+    }
+
+    sealed class UiOp {
+        class Enabled(val isEnabled : Boolean): UiOp()
+        class Text(val text: String ): UiOp()
+    }
+    fun execute(view: TextView, op: UiOp) = when (op) {
+        is UiOp.Enabled -> view.isEnabled = op.isEnabled
+        is UiOp.Text -> view. text = op.text
+    }
+
+    // 定义一组操作
+    val ui = Ui() +
+            UiOp.Enabled(true) +
+            UiOp.Text("刷新按钮(不重复)")
+
+    val ui2 = Ui() +
+            UiOp.Enabled(true) +
+            UiOp.Text("刷新按钮(相加等于45)")
+
+    val ui3= Ui() +
+            UiOp.Enabled(false) +
+            UiOp.Text("刷新中")
+
+    // 定义调用的函数
+    fun run(view: TextView, ui: Ui) {
+        ui.uiOps.forEach { execute(view, it) }
+    }
+
+
 
 }
 
