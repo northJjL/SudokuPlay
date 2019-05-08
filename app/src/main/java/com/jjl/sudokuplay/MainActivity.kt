@@ -1,17 +1,19 @@
 package com.jjl.sudokuplay
 
+import android.app.Activity
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import java.util.*
-import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
     var tempRefresh = intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9)
@@ -29,15 +31,58 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     lateinit var refreshButton: Button;
     lateinit var refreshButton2: Button;
 
+    class ResourceID() {
+        val sudokuRv: Int = R.id.sudokuRv
+        val refreshButton: Int = R.id.refreshButton
+        val refreshButton2: Int = R.id.refreshButton2
+    }
+
     companion object {
         var TYPE_REPEAT = 1;
         var TYPE_SUN = 2;
     }
 
+   class MyUI (activity : Activity){
+       val sudokuRv by bindResource(activity ,ResourceID())
+       val refreshButton by bindResource(activity ,ResourceID())
+       val refreshButton2  by bindResource(activity ,ResourceID())
+       fun  bindResource(activity: Activity, id: ResourceID): ResourceLoader {
+           var res = ResourceLoader(activity ,id);
+           return res
+       }
+   }
+
+    class ResourceLoader(activity: Activity ,id: ResourceID) {
+        val d: ResourceID = id
+        val mActivity : Activity = activity
+        operator fun provideDelegate( thisRef: MyUI, prop: KProperty<*>): ReadOnlyProperty<MyUI, View> {
+            if(checkProperty(thisRef, prop.name)){
+                return findViewById(mActivity ,d)
+            }else{
+                throw Exception("Error ${prop.name}")
+            }
+        }
+        private fun checkProperty(thisRef: MyUI, name: String):Boolean {
+            return name.equals("sudokuRv") || name.equals("refreshButton") || name.equals("refreshButton2")
+        }
+    }
+
+    class findViewById(context: Activity, d: ResourceID) : ReadOnlyProperty<MyUI, View> {
+        val id: ResourceID = d
+        val mContext: Activity = context
+        override fun getValue(thisRef: MyUI, property: KProperty<*>): View {
+            if(property.name.equals("sudokuRv"))
+                return mContext.findViewById<ImageView>(id.sudokuRv)
+            else if(property.name.equals("refreshButton"))
+                return mContext.findViewById<ImageView>(id.refreshButton)
+            else
+                return mContext.findViewById<ImageView>(id.refreshButton2)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         initView();
         initRecyclerView();
     }
@@ -53,9 +98,13 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun initView() {
-        sudokuRv = findViewById<RecyclerView>(R.id.sudokuRv);
-        refreshButton = findViewById<Button>(R.id.refreshButton);
-        refreshButton2 = findViewById<Button>(R.id.refreshButton2);
+//        sudokuRv = findViewById<RecyclerView>(R.id.sudokuRv);
+//        refreshButton = findViewById<Button>(R.id.refreshButton);
+//        refreshButton2 = findViewById<Button>(R.id.refreshButton2);
+        val ui : MyUI = MyUI(this)
+        sudokuRv = ui.sudokuRv as RecyclerView;
+        refreshButton = ui.refreshButton as Button;
+        refreshButton2 = ui.refreshButton2 as Button;
         sudokuRv.layoutManager = GridLayoutManager(applicationContext, 9)
         refreshButton.setOnClickListener(this)
         refreshButton2.setOnClickListener(this)
