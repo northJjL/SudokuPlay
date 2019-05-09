@@ -52,12 +52,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
        }
    }
 
-    class ResourceLoader(activity: Activity ,id: ResourceID) {
-        val d: ResourceID = id
-        val mActivity : Activity = activity
+    class ResourceLoader(val activity: Activity ,val id: ResourceID) {
         operator fun provideDelegate( thisRef: MyUI, prop: KProperty<*>): ReadOnlyProperty<MyUI, View> {
             if(checkProperty(thisRef, prop.name)){
-                return findViewById(mActivity ,d)
+                return findViewById(activity ,id)
             }else{
                 throw Exception("Error ${prop.name}")
             }
@@ -67,16 +65,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    class findViewById(context: Activity, d: ResourceID) : ReadOnlyProperty<MyUI, View> {
-        val id: ResourceID = d
-        val mContext: Activity = context
+    class findViewById(val context: Activity,val id: ResourceID) : ReadOnlyProperty<MyUI, View> {
         override fun getValue(thisRef: MyUI, property: KProperty<*>): View {
             if(property.name.equals("sudokuRv"))
-                return mContext.findViewById<ImageView>(id.sudokuRv)
+                return context.findViewById<ImageView>(id.sudokuRv)
             else if(property.name.equals("refreshButton"))
-                return mContext.findViewById<ImageView>(id.refreshButton)
+                return context.findViewById<ImageView>(id.refreshButton)
             else
-                return mContext.findViewById<ImageView>(id.refreshButton2)
+                return context.findViewById<ImageView>(id.refreshButton2)
         }
     }
 
@@ -274,6 +270,14 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         ui.uiOps.forEach { execute(view, it) }
     }
 
+
+    //在扩展函数内， 可以通过 this 来判断接收者是否为 NULL,这样，即使接收者为 NULL,也可以调用扩展函数。例如:
+    fun Any?.toString(): String {
+        if (this == null) return "null"
+        // 空检测之后，“this”会自动转换为非空类型，所以下面的 toString()
+        // 解析为 Any 类的成员函数
+        return toString()
+    }
 
 
 }
